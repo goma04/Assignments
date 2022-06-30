@@ -1,0 +1,98 @@
+CREATE TABLE Employer
+(
+	Employer_ID INTEGER,
+	FullName TEXT,
+	JoiningDate DATE,
+	CurrentPosition TEXT,
+	Department TEXT,
+	AssignedProject TEXT
+)
+
+
+
+CREATE TABLE Services(
+	Software_ID INTEGER,
+	Name TEXT,
+	Category TEXT,
+	Size INTEGER,
+	NumberOfInstallment INTEGER
+)
+
+
+
+
+CREATE TABLE Software_Requests
+(
+	Employer_ID INTEGER,
+	Software_ID INTEGER,
+	Request_Start_Date DATE,
+	Request_Close_Date DATE,
+	Status TEXT
+)
+
+
+
+
+I should use a trigger that would increment NumberOfInstallmet of the proper software by one after a request was inserted.
+
+
+
+I would create a stored procedure to make a request invalid. It would automatically decrease the number of installments of that software when it is called. The IT team should use this stored procedure whenever they want to flag a request invalid.
+
+
+
+INSERT INTO Services
+VALUES
+(
+	1,
+	'Lakoma',
+	'A',
+	'1205',
+	'0'
+),
+(
+	2,
+	'Jokora',
+	'C',
+	'653',
+	'0'
+);
+INSERT INTO Employer
+VALUES
+(
+	12345,
+	'John Doe',
+	'2020-10-19',
+	'Developer',
+	'Software and Data',
+	'Morgan Stanley'
+	
+),
+(
+	54321,
+	'Sarah Hamle',
+	'2000-03-19',
+	'Assistant',
+	'HR',
+	'Talent program'
+	
+);
+INSERT INTO Software_Requests
+VALUES
+(
+	12345,
+	1,
+	'2002-01-11',
+	'2002-03-11',
+	'Closed'
+),
+(
+	12345,
+	2,
+	'2022-06-11',
+	null,
+	'Ongoing'
+);
+
+
+
