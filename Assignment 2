@@ -1,0 +1,88 @@
+select 
+	"Artist"."Name" as "Artist Name", 
+	case when "Album"."Title" is null then 'No album' else  "Album"."Title" end as "Album Name"
+from "Artist" 
+left join "Album" 
+on "Artist"."ArtistId" = "Album"."ArtistId"
+order by "Artist"."Name"
+
+
+select "Artist"."Name" as "Artist Name", "Album"."Title" as "Album Name"
+from "Artist"
+inner join "Album"
+on  "Artist"."ArtistId" = "Album"."ArtistId"
+order by "Artist"."Name" desc
+
+
+select "Artist"."Name" as "Artist Name"
+from "Artist"
+left join "Album"
+on  "Artist"."ArtistId" = "Album"."ArtistId"
+where "Album"."Title" is null
+order by "Artist"."Name"
+
+
+select "Artist"."Name" as "Artist Name", Count("Album"."Title")  as "No of albums"
+from "Artist"
+inner join "Album"
+on  "Artist"."ArtistId" = "Album"."ArtistId"
+group by "Artist"."Name"
+order by "No of albums" desc, "Artist"."Name" asc
+
+
+select "Artist"."Name" as "Artist Name", Count("Album"."Title")  as "No of albums"
+from "Artist"
+inner join "Album"
+on  "Artist"."ArtistId" = "Album"."ArtistId"
+group by "Artist"."Name"
+having Count("Album"."Title") >= 10
+order by "No of albums" desc, "Artist"."Name" asc
+
+
+select "Artist"."Name" as "Artist Name", Count("Album"."Title")  as "No of albums"
+from "Artist"
+inner join "Album"
+on  "Artist"."ArtistId" = "Album"."ArtistId"
+group by "Artist"."Name"
+order by "No of albums" desc
+limit 3
+
+
+select "Artist"."Name" as "Artist Name", "Album"."Title" as "Album Title", "Track"."Name" as "Track"
+from "Artist"
+	inner join "Album" on  "Artist"."ArtistId" = "Album"."ArtistId"
+	inner join "Track" on "Track"."AlbumId" = "Album"."AlbumId"
+where "Artist"."Name" = 'Santana'
+order by "Track"."TrackId"
+
+
+select 
+	"Employee"."FirstName" || ' ' || "Employee"."LastName" as "Employee name", 
+	"Employee"."EmployeeId" as "Employee ID",
+	"Employee"."Title" as "Employee Title",
+	(
+		select "Employee2"."FirstName" || ' ' || "Employee2"."LastName"
+		from "Employee" as "Employee2"
+		where "Employee"."ReportsTo" = "Employee2"."EmployeeId"
+	) as "Manager Name",
+	(
+		select "Employee2"."Title"
+		from "Employee" as "Employee2"
+		where "Employee"."ReportsTo" = "Employee2"."EmployeeId"
+	) as "Manager Title",
+	(
+		select "Employee2"."EmployeeId"
+		from "Employee" as "Employee2"
+		where "Employee"."ReportsTo" = "Employee2"."EmployeeId"
+	) as "Manager ID"
+from "Employee"
+
+
+
+
+
+
+
+
+
+
