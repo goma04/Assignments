@@ -36,7 +36,6 @@ create or replace function installment_increase()
 	language plpgsql
 as $$
 begin	
-
 	update services
 	set numberofinstallment = numberofinstallment + 1
 	where new.software_id = software_id;
@@ -60,7 +59,6 @@ begin
 	update software_requests 
 	set status='invalid'
 	where employer_id = _employer_id and software_id = _software_id;
-
 
 	update services as s
 	set numberofinstallment = numberofinstallment - 1
