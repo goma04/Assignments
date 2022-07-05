@@ -8,7 +8,7 @@ CREATE TABLE Employer
 	AssignedProject TEXT
 )
 
-
+----------------------------------------------------------
 
 CREATE TABLE Services(
 	Software_ID INTEGER,
@@ -18,8 +18,7 @@ CREATE TABLE Services(
 	NumberOfInstallment INTEGER
 )
 
-
-
+----------------------------------------------------------
 
 CREATE TABLE Software_Requests
 (
@@ -30,16 +29,46 @@ CREATE TABLE Software_Requests
 	Status TEXT
 )
 
+----------------------------------------------------------
+
+create or replace function installment_increase()
+	returns trigger
+	language plpgsql
+as $$
+begin	
+
+	update services
+	set numberofinstallment = numberofinstallment + 1
+	where new.software_id = software_id;
+	
+	return new;
+end;
+$$
+
+create or replace trigger request_insert_trigger
+	before insert
+	on software_requests
+	for each row
+	execute procedure installment_increase();
+
+----------------------------------------------------------
+
+create or replace procedure set_request_invalid(_employer_id int, _software_id int)
+language plpgsql
+as $$
+begin
+	update software_requests 
+	set status='invalid'
+	where employer_id = _employer_id and software_id = _software_id;
 
 
+	update services as s
+	set numberofinstallment = numberofinstallment - 1
+	where s.software_id = _software_id;
+end;
+$$
 
-I should use a trigger that would increment NumberOfInstallmet of the proper software by one after a request was inserted.
-
-
-
-I would create a stored procedure to make a request invalid. It would automatically decrease the number of installments of that software when it is called. The IT team should use this stored procedure whenever they want to flag a request invalid.
-
-
+----------------------------------------------------------
 
 INSERT INTO Services
 VALUES
