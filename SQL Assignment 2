@@ -1,4 +1,4 @@
-Excercise 1 ------------------------------------------------------------------------------
+Exercise 1 ------------------------------------------------------------------------------
 
 select 
 	"Artist"."Name" as "Artist Name", 
@@ -8,7 +8,7 @@ left join "Album"
 on "Artist"."ArtistId" = "Album"."ArtistId"
 order by "Artist"."Name"
 
-Excercise 2 ------------------------------------------------------------------------------
+Exercise 2 ------------------------------------------------------------------------------
 
 select "Artist"."Name" as "Artist Name", "Album"."Title" as "Album Name"
 from "Artist"
@@ -16,7 +16,7 @@ inner join "Album"
 on  "Artist"."ArtistId" = "Album"."ArtistId"
 order by "Artist"."Name" desc
 
-Excercise 3 ------------------------------------------------------------------------------
+Exercise 3 ------------------------------------------------------------------------------
 
 select "Artist"."Name" as "Artist Name"
 from "Artist"
@@ -25,7 +25,7 @@ on  "Artist"."ArtistId" = "Album"."ArtistId"
 where "Album"."Title" is null
 order by "Artist"."Name"
 
-Excercise 4 ------------------------------------------------------------------------------
+Exercise 4 ------------------------------------------------------------------------------
 
 select "Artist"."Name" as "Artist Name", Count("Album"."Title")  as "No of albums"
 from "Artist"
@@ -34,7 +34,7 @@ on  "Artist"."ArtistId" = "Album"."ArtistId"
 group by "Artist"."Name"
 order by "No of albums" desc, "Artist"."Name" asc
 
-Excercise 5 ------------------------------------------------------------------------------
+Exercise 5 ------------------------------------------------------------------------------
 
 select "Artist"."Name" as "Artist Name", Count("Album"."Title")  as "No of albums"
 from "Artist"
@@ -44,7 +44,7 @@ group by "Artist"."Name"
 having Count("Album"."Title") >= 10
 order by "No of albums" desc, "Artist"."Name" asc
 
-Excercise 6 ------------------------------------------------------------------------------
+Exercise 6 ------------------------------------------------------------------------------
 
 select "Artist"."Name" as "Artist Name", Count("Album"."Title")  as "No of albums"
 from "Artist"
@@ -54,7 +54,7 @@ group by "Artist"."Name"
 order by "No of albums" desc
 limit 3
 
-Excercise 7 ------------------------------------------------------------------------------
+Exercise 7 ------------------------------------------------------------------------------
 
 select "Artist"."Name" as "Artist Name", "Album"."Title" as "Album Title", "Track"."Name" as "Track"
 from "Artist"
@@ -63,7 +63,7 @@ from "Artist"
 where "Artist"."Name" = 'Santana'
 order by "Track"."TrackId"
 
-Excercise 8 ------------------------------------------------------------------------------
+Exercise 8 ------------------------------------------------------------------------------
 
 select 
 	"Employee"."FirstName" || ' ' || "Employee"."LastName" as "Employee name", 
@@ -87,7 +87,7 @@ select
 from "Employee"
 order by "Employee"."EmployeeId"
 
-Excercise 9 ------------------------------------------------------------------------------
+Exercise 9 ------------------------------------------------------------------------------
 
 create or replace view top_employees 
 as
@@ -110,7 +110,7 @@ where "Employee"."EmployeeId" in (select emp_id
 					 limit 1)
 order by "cust_name"
 
-Excercise 10 ------------------------------------------------------------------------------
+Exercise 10 ------------------------------------------------------------------------------
 
 insert into "MediaType"
 values (6, 'MP3')
@@ -136,7 +136,7 @@ create or replace trigger prevent_MP3_insert_trigger
 	for each row
 	execute procedure prevent_MP3_insert();
 
-Excercise 11 ------------------------------------------------------------------------------
+Exercise 11 ------------------------------------------------------------------------------
 	
 create table Tracks_Audit(
 	operation text,
