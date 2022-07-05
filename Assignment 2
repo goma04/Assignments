@@ -76,7 +76,32 @@ select
 		where "Employee"."ReportsTo" = "Employee2"."EmployeeId"
 	) as "Manager ID"
 from "Employee"
+order by "Employee"."EmployeeId"
 
+create or replace view top_employees 
+as
+select 
+	"Employee"."FirstName" || ' ' || "Employee"."LastName" as "emp_name", 
+	"Employee"."EmployeeId" as "emp_id",
+	Count("Customer"."SupportRepId") as "cust_count"
+from "Employee"
+join "Customer" on "Customer"."SupportRepId" = "Employee"."EmployeeId"
+group by "emp_name", "emp_id"
+
+
+select  "Employee"."FirstName" || ' ' || "Employee"."LastName" as "emp_name", 
+		"Customer"."FirstName" || ' ' || "Customer"."LastName" as "cust_name"
+from "Customer"
+join "Employee" on "Employee"."EmployeeId" = "Customer"."SupportRepId"
+where "Employee"."EmployeeId" in (select emp_id
+								  from top_employees
+								  order by cust_count desc
+								  limit 1)
+order by "cust_name"
+
+
+insert into "MediaType"
+values (6, 'MP3')
 
 
 
