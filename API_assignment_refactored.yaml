@@ -1,0 +1,900 @@
+openapi: 3.0.0
+servers: []
+info:
+  version: "1.0.0"
+  contact:
+    name: Marton Godor
+    email: 2442416@tcs.com
+  title: API assignment
+
+paths:
+  /interviews:
+      get:
+        summary: gets all interviews
+        tags:
+          - project manager
+          - sourcer
+          - technical interviewer
+          - management interviewer
+        responses:
+          200:
+            description: The array of objects is returned in content
+            content:
+              application/json:
+                schema:
+                   properties:
+                      interviews:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/InterviewWithId'
+                      
+                   
+          401:
+             description: Authorization information is missing or invalid.
+          500: 
+             description: Unexpected server-side error.
+             
+  /interview:
+      post:
+        tags:
+          - sourcer
+          - recruiter
+        summary: adds a new interview with possible timeslots
+        requestBody:
+          content:
+            application/json:
+              schema: 
+                $ref: '#/components/schemas/InterviewNoId'
+        responses:
+         201:
+            description: Interview created.
+            content:
+              application/json:
+                schema:
+                   $ref: '#/components/schemas/InterviewWithId'
+         400:
+            description: Invalid input, object invalid.
+         401:
+             description: Authorization information is missing or invalid.
+         500: 
+             description: Unexpected server-side error.
+             
+  /interview/{interviewId}:
+      get:
+        summary: fetches an interview
+        parameters:
+          - name: interviewId
+            in: path
+            required: true
+            description: Id of the interview
+            schema:
+              format: uuid
+              type: string
+        tags:
+          - admin
+        responses:
+          200:
+            description: An interview has been returned.
+            content:
+              application/json:
+                 schema:
+                   $ref: '#/components/schemas/InterviewWithId'
+          400:
+            description: Invalid ID supplied
+          401:
+             description: Authorization information is missing or invalid.
+          404:
+            description: Interview not found
+          500: 
+             description: Unexpected server-side error.
+      put:
+        parameters:
+           - name: interviewId
+             in: path
+             required: true
+             description: Id of the interview
+             schema:
+               format: uuid
+               type: string
+        tags: 
+          - technical interviewer
+          - management interviewer
+          - sourcer
+        summary: updates an interview, assign final date and interviewer
+        requestBody:
+          content:
+            application/json:
+              schema: 
+                $ref: '#/components/schemas/InterviewNoId'
+        responses:
+           200:
+             description: Interview was update successfully.
+           400:
+             description: Bad request. 
+           401:
+             description: Authorization information is missing or invalid.
+           404:
+             description: An interview with the specified ID was not found.
+           500: 
+             description: Unexpected server-side error.
+      delete:
+            tags:
+              - sourcer
+            parameters:
+              - name: interviewId
+                in: path
+                description: ID of interview that needs to be deleted
+                required: true
+                schema:
+                  type: string
+                  format: uuid
+            summary: deletes an interview
+            responses:
+              200:
+                description: Object deleted successfully.
+              400:
+                description: Invalid ID supplied
+              401:
+                description: Authorization information is missing or invalid.
+              404:
+                description: Interview not found
+              500: 
+                description: Unexpected server-side error.
+             
+
+  /candidates:
+      get:
+        summary: gets all candidates
+        tags:
+          - project manager
+          - sourcer
+          - recruiter
+        responses:
+          200:
+            description: The array of candidates is returned in content
+          401:
+             description: Authorization information is missing or invalid.
+          500: 
+             description: Unexpected server-side error.
+             
+  /candidate:
+      post:
+        summary: adds a new candidate
+        tags:
+          - sourcer
+        requestBody:
+          content:
+            application/json:
+              schema: 
+                $ref: '#/components/schemas/CandidateNoId'
+        responses:
+            201:
+              description: Candidate created and returned in content
+              content:
+                application/json:
+                 schema: 
+                   $ref: '#/components/schemas/CandidateWithId'
+            400:
+              description: Invalid input, object invalid
+            401:
+               description: Authorization information is missing or invalid.
+            500: 
+             description: Unexpected server-side error.
+             
+  /candidate/{candidateId}:
+       get:
+        summary: fetches a candidate
+        parameters:
+          - name: candidateId
+            in: path
+            required: true
+            description: Id of the candidate
+            schema:
+              format: uuid
+              type: string
+        tags:
+          - admin
+        responses:
+          200:
+            description: A candidate has been returned.
+            content:
+              application/json:
+                 schema:
+                   $ref: '#/components/schemas/CandidateWithId'
+          400:
+            description: Invalid ID supplied
+          401:
+             description: Authorization information is missing or invalid.
+          404:
+            description: Candidate not found
+          500: 
+             description: Unexpected server-side error.
+       delete:
+            tags:
+              - sourcer
+              - recruiter
+            parameters:
+              - name: candidateId
+                in: path
+                description: ID of candidate that needs to be deleted
+                required: true
+                schema:
+                  type: string
+                  format: uuid
+            summary: deletes a candidate
+            responses:
+              200:
+                description: Object deleted successfully.
+              400:
+                description: Invalid ID supplied
+              401:
+                description: Authorization information is missing or invalid.
+              404:
+                description: Candidate not found
+              500: 
+                description: Unexpected server-side error.
+       put:
+        parameters:
+           - name: candidateId
+             in: path
+             required: true
+             description: Id of the candidate
+             schema:
+               format: uuid
+               type: string
+        tags: 
+          - sourcer
+        summary: updates a candidate
+        requestBody:
+          content:
+            application/json:
+              schema: 
+                $ref: '#/components/schemas/CandidateNoId'
+        responses:
+           200:
+             description: Candidate was update successfully.
+           400:
+             description: Bad request. 
+           401:
+             description: Authorization information is missing or invalid.
+           404:
+             description: A candidate with the specified ID was not found.
+           500: 
+             description: Unexpected server-side error.
+               
+  /candidate/{candidateId}/approve:
+      post:
+        parameters:
+           - name: candidateId
+             in: path
+             required: true
+             description: Id of the candidate
+             schema:
+               format: uuid
+               type: string
+        summary: approves a candidate for further process
+        tags: 
+           - recruiter
+           - project manager
+        requestBody:
+          content:
+            application/json:
+              schema: 
+                $ref: '#/components/schemas/CandidateNoId'
+        responses:
+           200:
+             description: Candidate has been approved for further process.
+           400:
+             description: Bad request. 
+           401:
+             description: Authorization information is missing or invalid.
+           404:
+             description: A candidate with the specified ID was not found.
+           
+  /projects:
+      get:
+        tags:
+          - project manager
+        summary: fetches all projects.
+        responses:
+          200:
+            description: Projects have been returned in content.
+          401:
+             description: Authorization information is missing or invalid.
+          500: 
+             description: Unexpected server-side error.
+  /project:
+      post:
+        summary: adds a new project
+        tags:
+          - admin
+          - project manager
+        requestBody:
+          content:
+            application/json:
+              schema: 
+                $ref: '#/components/schemas/ProjectNoId'
+        responses:
+         201:
+            description: Project has been created and returned in content
+            content:
+              application/json:
+                schema:
+                   $ref: '#/components/schemas/ProjectWithId'
+         400:
+            description: Invalid input, object invalid
+         401:
+             description: Authorization information is missing or invalid
+             
+  /project/{projectId}:
+     get:
+        summary: fetches a position
+        parameters:
+          - name: projectId
+            in: path
+            required: true
+            description: Id of the project
+            schema:
+              format: uuid
+              type: string
+        tags:
+          - admin
+        responses:
+          200:
+            description: A project has been returned.
+            content:
+              application/json:
+                 schema:
+                   $ref: '#/components/schemas/ProjectWithId'
+          400:
+            description: Invalid ID supplied
+          401:
+             description: Authorization information is missing or invalid.
+          404:
+            description: Project not found
+          500: 
+             description: Unexpected server-side error.
+     delete:
+            tags:
+              - admin
+            parameters:
+              - name: projectId
+                in: path
+                description: ID of project that needs to be deleted
+                required: true
+                schema:
+                  type: string
+                  format: uuid
+            summary: deletes a project
+            responses:
+              200:
+                description: Object deleted successfully.
+              400:
+                description: Invalid ID supplied
+              401:
+                description: Authorization information is missing or invalid.
+              404:
+                description: Project not found
+              500: 
+                description: Unexpected server-side error.
+     put:
+        parameters:
+           - name: projectId
+             in: path
+             required: true
+             description: Id of the project
+             schema:
+               format: uuid
+               type: string
+        tags: 
+          - project manager
+        summary: updates a project
+        requestBody:
+          content:
+            application/json:
+              schema: 
+                $ref: '#/components/schemas/ProjectNoId'
+        responses:
+           200:
+             description: Project was update successfully.
+           400:
+             description: Bad request. 
+           401:
+             description: Authorization information is missing or invalid.
+           404:
+             description: A project with the specified ID was not found.
+           500: 
+             description: Unexpected server-side error.
+     
+  /positions:
+     get:
+        tags:
+          - recruiter
+          - sourcer
+        summary: fetches all positions.
+        responses:
+          200:
+            description: Positions have been returned in content.
+          401:
+             description: Authorization information is missing or invalid.
+          500: 
+             description: Unexpected server-side error.
+             
+  /position:
+      post:
+        tags:
+          - recruiter
+        summary: adds a new position
+        requestBody:
+          content:
+            application/json:
+              schema: 
+                $ref: '#/components/schemas/PositionNoId'
+        responses:
+         201:
+            description: position created
+            content:
+             application/json:
+                schema: 
+                  $ref: '#/components/schemas/ProjectNoId'
+         400:
+            description: Invalid input, object invalid
+         401:
+            description: Authorization information is missing or invalid.
+         409:
+            description: position already exists   
+         500: 
+             description: Unexpected server-side error.
+      
+  /position/{positionId}:
+        put:
+         tags: 
+          - recruiter
+         parameters:
+           - name: positionId
+             in: path
+             required: true
+             description: Id of the position
+             schema:
+               format: uuid
+               type: string
+         summary: updates a position
+         requestBody:
+          content:
+            application/json:
+              schema: 
+                $ref: '#/components/schemas/PositionNoId'
+         responses:
+           200:
+             description: Position was update successfully.
+           400:
+             description: Bad request. 
+           401:
+             description: Authorization information is missing or invalid.
+           404:
+             description: A position with the specified ID was not found.
+           500: 
+             description: Unexpected server-side error.
+        get:
+         summary: fetches a position
+         parameters:
+          - name: positionId
+            in: path
+            required: true
+            description: Id of the position
+            schema:
+              format: uuid
+              type: string
+         tags:
+          - project manager
+          - sourcer
+          - technical interviewer
+          - management interviewer
+         responses:
+          200:
+            description: A position has been returned.
+            content:
+              application/json:
+                 schema:
+                   $ref: '#/components/schemas/PositionWithId'
+          400:
+            description: Invalid ID supplied
+          401:
+             description: Authorization information is missing or invalid.
+          404:
+            description: Position not found
+          500: 
+             description: Unexpected server-side error.
+             
+        delete:
+            tags:
+              - recruiter
+            parameters:
+              - name: positionId
+                in: path
+                description: ID of position that needs to be deleted
+                required: true
+                schema:
+                  type: string
+                  format: uuid
+            summary: deletes a position
+            responses:
+              200:
+                description: Object deleted successfully.
+              400:
+                description: Invalid ID supplied
+              401:
+                description: Authorization information is missing or invalid.
+              404:
+                description: Position not found
+              500: 
+                description: Unexpected server-side error.
+                
+  /role:
+     post:
+        tags:
+          - admin
+        summary: adds a new role
+        responses:
+         201:
+            description: Role has been created
+            content:
+              application/json:
+               schema:
+                 $ref: '#/components/schemas/RoleWithId'
+         400:
+            description: invalid input, object invalid
+         401:
+            description: Authorization information is missing or invalid.
+         409:
+            description: role already exists
+         500: 
+                description: Unexpected server-side error.
+        requestBody:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RoleNoId'
+                
+  /role/{roleId}:
+      put:
+        parameters:
+              - name: roleId
+                in: path
+                description: ID of role that needs to be updated
+                required: true
+                schema:
+                  type: string
+                  format: uuid
+        tags: 
+          - admin
+        summary: updates a role
+        requestBody:
+          content:
+            application/json:
+              schema: 
+                $ref: '#/components/schemas/RoleNoId'
+        responses:
+           200:
+             description: A role has been updated
+           400:
+             description: Bad request. 
+           401:
+             description: Authorization information is missing or invalid.
+           404:
+             description: A role with the specified ID was not found.
+           500: 
+             description: Unexpected server-side error.
+             
+      delete:
+            tags:
+              - admin
+            parameters:
+              - name: roleId
+                in: path
+                description: ID of role that needs to be deleted
+                required: true
+                schema:
+                  type: string
+                  format: uuid
+            summary: deletes a role
+            responses:
+              400:
+                description: Invalid ID supplied
+              401:
+                description: Authorization information is missing or invalid.
+              404:
+                description: Role not found
+              500: 
+                description: Unexpected server-side error.
+  /users:
+     get:
+        tags:
+          - admin
+        summary: fetches all users.
+        responses:
+          200:
+            description: Users have been returned in content.
+          401:
+             description: Authorization information is missing or invalid.
+          500: 
+             description: Unexpected server-side error.
+                
+  
+  /user:
+      post:
+        tags:
+          - admin
+        summary: adds a new user
+        responses:
+         201:
+            description: user created
+            content:
+               application/json:
+                  schema:
+                   $ref: '#/components/schemas/UserWithId'
+         400:
+            description: invalid input, object invalid
+         401:
+            description: Authorization information is missing or invalid.
+         409:
+            description: user already exists
+         500: 
+            description: Unexpected server-side error.
+        requestBody:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserNoId'
+                
+  /user/{userId}:
+      get:
+        summary: fetches a user
+        parameters:
+          - name: userId
+            in: path
+            required: true
+            description: Id of the user
+            schema:
+              format: uuid
+              type: string
+        tags:
+          - admin
+        responses:
+          200:
+            description: A user has been returned.
+            content:
+              application/json:
+                 schema:
+                   $ref: '#/components/schemas/UserWithId'
+          400:
+            description: Invalid ID supplied
+          401:
+             description: Authorization information is missing or invalid.
+          404:
+            description: User not found
+          500: 
+             description: Unexpected server-side error.
+      put:
+        parameters:
+              - name: userId
+                in: path
+                description: ID of user that needs to be updated
+                required: true
+                schema:
+                  type: string
+                  format: uuid
+        tags: 
+          - admin
+        summary: updates a user
+        requestBody:
+          content:
+            application/json:
+              schema: 
+                $ref: '#/components/schemas/UserNoId'
+        responses:
+           200:
+             description: User has been updated
+           400:
+             description: Bad request. 
+           401:
+             description: Authorization information is missing or invalid.
+           404:
+             description: A user with the specified ID was not found.
+           500: 
+             description: Unexpected server-side error.
+             
+      delete:
+        tags:
+          - admin
+        parameters:
+          - name: userId
+            in: path
+            description: ID of user that needs to be deleted
+            required: true
+            schema:
+              type: string
+              format: uuid
+        summary: deletes a user
+        responses:
+          200:
+            description: Object deleted successfuly.
+          400:
+            description: Invalid ID supplied
+          401:
+             description: Authorization information is missing or invalid.
+          404:
+            description: User not found
+          500: 
+            description: Unexpected server-side error.
+      
+components:
+  schemas:
+  
+    ProjectNoId:
+      type: object
+      properties:
+        name:
+          type: string
+          
+      
+    ProjectWithId:
+       allOf:
+       -  type: object
+          properties:
+              id:
+                type: string
+                format: uuid
+       -  $ref: '#/components/schemas/ProjectNoId'
+
+
+    UserWithId:
+       allOf:
+       -  type: object
+          properties:
+              id:
+                type: string
+                format: uuid
+       -  $ref: '#/components/schemas/UserNoId'
+          
+    UserNoId:
+      type: object
+      properties:
+        name:
+          type: string
+        email:
+          type: string
+        role:
+          $ref: '#/components/schemas/RoleWithId'
+          
+  
+
+    CandidateNoId:
+      type: object
+      properties:
+        name:
+          type: string
+        email:
+          type: string
+        experience:
+          type: string
+        relevantPosition:
+          type: array
+          items:
+            type: string
+            format: uuid
+            
+    CandidateWithId:
+       allOf:
+       -  type: object
+          properties:
+              id:
+                type: string
+                format: uuid
+       -  $ref: '#/components/schemas/CandidateNoId'
+          
+    InterviewWithId:
+      allOf:
+       -  type: object
+          properties:
+              id:
+                type: string
+                format: uuid
+       -  $ref: '#/components/schemas/InterviewNoId'
+          
+    InterviewNoId:
+      type: object
+      properties:
+          interviewerId:
+            type: string
+            format: uuid
+          candidateId:
+            type: string
+            format: uuid
+          type:
+            type: string
+            enum: ["technical", "management"]
+          possibleTimeslots:
+            type: array
+            items:
+              $ref: '#/components/schemas/TimeslotNoId'
+          finalTimeslot:
+              $ref: '#/components/schemas/TimeslotNoId'
+            
+    TimeslotNoId:
+      type: object
+      properties:
+        start:
+          type: string
+          format: dateTime
+        end:
+          type: string
+          format: dateTime
+    
+    TimeslotWithId:
+      allOf:
+       -  type: object
+          properties:
+              id:
+                type: string
+                format: uuid
+       -  $ref: '#/components/schemas/TimeslotNoId'
+        
+    DocumentationWithId:
+       allOf:
+       -  type: object
+          properties:
+              id:
+                type: string
+                format: uuid
+       -  $ref: '#/components/schemas/DocumentationNoId'
+          
+    DocumentationNoId:
+      type: object
+      properties:
+        id: 
+          type: string
+          format: uuid
+        type:
+          type: string
+          enum: ["technical", "management"]
+        text: 
+          type: string
+        score: 
+          type: integer
+        
+    
+    RoleNoId:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+    
+    RoleWithId:
+       allOf:
+       -  type: object
+          properties:
+              id:
+                type: string
+                format: uuid
+       -  $ref: '#/components/schemas/RoleNoId'
+          
+    PositionWithId:
+      allOf:
+       -  type: object
+          properties:
+              id:
+                type: string
+                format: uuid
+       -  $ref: '#/components/schemas/PositionNoId'
+    
+    PositionNoId:
+      type: object
+      properties:
+        description:
+          type: string
+        name:
+          type: string
